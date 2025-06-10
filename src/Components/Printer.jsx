@@ -1,7 +1,8 @@
-import { useLoader, useThree } from "@react-three/fiber";
+import { useFrame, useLoader, useThree } from "@react-three/fiber";
 import { useEffect, useMemo, useState, useRef } from "react";
 import { BoxHelper, MeshStandardMaterial } from "three";
 import { OBJLoader } from "three/examples/jsm/Addons.js";
+import { usePrinterStore } from "../App";
 
 const colorMap = {
   Operational: "green",
@@ -18,7 +19,8 @@ const Printer = ({
   link,
   apiKey,
   setActive,
-  debug = false,
+  name,
+  cameraRef,
 }) => {
   const printer = useLoader(OBJLoader, file);
   const clone = useMemo(() => printer.clone(), [printer]);
@@ -28,6 +30,9 @@ const Printer = ({
 
   const { scene } = useThree();
   const boxRef = useRef();
+
+  const setPrinter =  usePrinterStore((state) => state.setPrinter)
+
 
   useEffect(() => {
     clone.position.set(...position);
@@ -88,6 +93,8 @@ const Printer = ({
         castshadow
         onClick={(e) => {
           setActive(true);
+          setPrinter({name: name, link: link, key: apiKey});
+          cameraRef.current.setPosition(0, 25, -80, true)
         }}
         object={clone}
         onPointerOver={(e) => {

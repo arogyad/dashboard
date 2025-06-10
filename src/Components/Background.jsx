@@ -1,15 +1,17 @@
-import { useTexture } from "@react-three/drei";
+import { Html } from "@react-three/drei";
 import { useLoader } from "@react-three/fiber";
-import { useControls } from "leva";
-import { useRef } from "react";
 import { TextureLoader } from "three";
+import Info from "./Info";
 
 const Wall0 = () => {
+
   return (
-    <>
       <mesh position={[8, 17, 9]} receiveShadow castShadow>
         <boxGeometry args={[50, 25, 1]} />
         {/* Default material for all faces */}
+      <Html occlude distanceFactor={30} center position={[16, 4, -0.6]} rotation={[0, Math.PI, 0]} transform>
+          <Info />
+      </Html>
         <directionalLight
           castShadow
           position={[-30.0, 10.0, -30.0]}
@@ -24,7 +26,6 @@ const Wall0 = () => {
         </directionalLight>
         <meshStandardMaterial emissive={"gray"} color="white" />
       </mesh>
-    </>
   );
 };
 
@@ -32,6 +33,7 @@ const Wall1 = () => {
   return (
     <mesh position={[-16.5, 17, -16.5]} receiveShadow castShadow>
       <boxGeometry args={[1, 25, 50]} />
+       
       <meshStandardMaterial emissive={"gray"} color="white" />
     </mesh>
   );

@@ -1,43 +1,15 @@
 import { useState, useRef } from "react";
 import { Canvas } from "@react-three/fiber";
-import { OrbitControls, useGLTF } from "@react-three/drei";
+import { CameraControls, OrbitControls, useGLTF } from "@react-three/drei";
 import printers from "./assets/printers.json";
 import Printer from "./Components/Printer";
 import Info from "./Components/Info";
 import Background from "./Components/Background";
 import { Desk } from "./Components/Desk";
 import { useControls } from "leva";
+import { create } from "zustand";
 
-function XL(props) {
-  const { nodes, _ } = useGLTF("/xl.glb");
-  const { position, rotation, scale } = useControls({
-    position: { value: [0, 0, 0], step: 0.1 },
-    rotation: { value: [0, 0, 0], step: Math.PI / 180 },
-    scale: { value: 1, step: 0.01 },
-  });
-
-  return (
-    <group
-      {...props}
-      dispose={null}
-      position={position}
-      rotation={rotation}
-      scale={scale}
-    >
-      <mesh
-        castShadow
-        receiveShadow
-        geometry={nodes.Prusa_XL.geometry}
-        material={nodes.Prusa_XL.material}
-        rotation={[-0.002, -0.169, 0.004]}
-        scale={0.14}
-      />
-    </group>
-  );
-}
-
-useGLTF.preload("/xl.glb");
-
+/* This is a helper function for lights */
 export const Light = ({ target }) => {
   const directionalLightRef = useRef();
 
@@ -74,6 +46,13 @@ export const Light = ({ target }) => {
   );
 };
 
+export const usePrinterStore = create((set) => ({
+  printer: {name: "", link: "", key: ""},
+  setPrinter: (newState) => set((state) => {
+    return {printer: newState}
+  }),
+}))
+
 function App() {
   const states = [
     useState(false),
@@ -81,6 +60,8 @@ function App() {
     useState(false),
     useState(false),
   ];
+
+  const cameraRef = useRef();
 
   return (
     <>
@@ -91,10 +72,12 @@ function App() {
           near: 0.1,
           far: 1000,
           position: [64, 50, -72],
+          // position: [0, 25, -80]
         }}
       >
         <color attach="background" args={["#f7f3e6"]} />
-
+        
+        <CameraControls ref={cameraRef} />
         <ambientLight intensity={2} color="#e9e5dc" />
         <Desk position={[-16, 4.5, 8.5]} />
         <Desk position={[-8, 4.5, -8.5]} rotation={[0, Math.PI / 2, 0]} />
@@ -103,6 +86,7 @@ function App() {
           <Printer
             key={printer.apiKey}
             setActive={states[index][1]}
+            cameraRef={cameraRef}
             {...printer}
           />
         ))}
@@ -114,7 +98,7 @@ function App() {
         />
       </Canvas>
 
-      {printers.map(({ name, link }, index) => (
+      {/* {printers.map(({ name, link }, index) => (
         <Info
           name={name}
           link={link}
@@ -122,7 +106,7 @@ function App() {
           setActive={states[index][1]}
           key={index}
         />
-      ))}
+      ))} */}
     </>
   );
 }
