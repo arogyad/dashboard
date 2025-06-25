@@ -1,11 +1,10 @@
 import { useState, useRef } from "react";
 import { Canvas } from "@react-three/fiber";
-import { CameraControls, OrbitControls, useGLTF } from "@react-three/drei";
+import { CameraControls, OrbitControls } from "@react-three/drei";
 import printers from "./assets/printers.json";
-import Printer from "./Components/Printer";
-import Info from "./Components/Info";
+import Printer, { DebugPrinter } from "./Components/Printer";
 import Background from "./Components/Background";
-import { Desk } from "./Components/Desk";
+import { DebugDesk, Desk } from "./Components/Desk";
 import { useControls } from "leva";
 import { create } from "zustand";
 
@@ -46,6 +45,7 @@ export const Light = ({ target }) => {
   );
 };
 
+// This is the storage for which printer is being shown on the Wall
 export const usePrinterStore = create((set) => ({
   printer: {name: "", link: "", key: ""},
   setPrinter: (newState) => set((state) => {
@@ -53,14 +53,8 @@ export const usePrinterStore = create((set) => ({
   }),
 }))
 
+// Main entry point, each time we add a new printer we add another useState(False)
 function App() {
-  const states = [
-    useState(false),
-    useState(false),
-    useState(false),
-    useState(false),
-  ];
-
   const cameraRef = useRef();
 
   return (
@@ -82,10 +76,9 @@ function App() {
         <Desk position={[-16, 4.5, 8.5]} />
         <Desk position={[-8, 4.5, -8.5]} rotation={[0, Math.PI / 2, 0]} />
         <Background />
-        {printers.map((printer, index) => (
+        {printers.map((printer, index) => "debug" in printer ? <DebugPrinter key={index}/> : (
           <Printer
             key={printer.apiKey}
-            setActive={states[index][1]}
             cameraRef={cameraRef}
             {...printer}
           />

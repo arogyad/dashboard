@@ -20,7 +20,7 @@ const NotUseView = ({name, link}) => {
       )
 }
 
-const UseView = ({name, timeLeft, left, link}) => {
+const UseView = ({name, timeLeft, completed, link}) => {
   const {Timer} = Statistic;
   const deadline = Date.now() + timeLeft * 1000;
 
@@ -30,19 +30,22 @@ const UseView = ({name, timeLeft, left, link}) => {
       <Typography.Text style={{paddingRight: "12px"}}>Print Time Left:</Typography.Text>
       <Timer type="countdown" value={deadline} />
     </Row>
-    <Progress percent={Math.floor(left)} status="active"/>
+    {/* <Progress percent={Math.floor(completed)} status="active"/> */}
     <Button style={{marginTop: "12px"}} type="primary" href={link} target="_blank">View Printer</Button>
   </Col>
 }
 
 const Info = () => {
   const {name, link, key} = usePrinterStore((state) => state.printer)
-  const [info, setInfo] = useState(null);
+  const [printTime, setPrintTime] = useState(null);
+  const [completion, setCompletion] = useState(null);
+  const [printerState, setPrinterState] = useState(null);
 
   useEffect(() => {
     if (name != ""){
       const getData = async () => {
         try {
+          console.log(link)
           const response = await fetch(`${link}/api/job`, {
             method: "GET",
             headers: {
@@ -50,10 +53,12 @@ const Info = () => {
               "X-Api-key": key,
             },
           }).then((res) => res.json());
-
-          setInfo(response);
+          
+          setPrintTime(response['progress']['printTimeLeft'])
+          setCompletion(response['progress']['completion'])
+          setPrinterState(response['state'])
         } catch (error) {
-          setInfo(null);
+          setPrinterState(null);
         }
       };
 
@@ -61,11 +66,12 @@ const Info = () => {
     }
   }, [name])
 
-  if(info) {
-    if(info["state"] === "Operational") {
-      return <NotUseView name={name} link={link}/>
+
+  if(printerState) {
+    if(printerState === "Printing") {
+      return <UseView name={name} timeLeft={printTime} completed={completion} link={link}/>
     } else {
-      return <UseView name={name} estimatedPrintTime={info['progress']['printTimeLeft']} left={info['progress']['completion']*100} link={link}/>
+      return <NotUseView name={name} link={link}/>
     }
   } 
 

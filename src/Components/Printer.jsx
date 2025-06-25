@@ -1,8 +1,9 @@
-import { useFrame, useLoader, useThree } from "@react-three/fiber";
+import { useLoader, useThree } from "@react-three/fiber";
 import { useEffect, useMemo, useState, useRef } from "react";
 import { BoxHelper, MeshStandardMaterial } from "three";
 import { OBJLoader } from "three/examples/jsm/Addons.js";
 import { usePrinterStore } from "../App";
+import { useControls } from "leva";
 
 const colorMap = {
   Operational: "green",
@@ -10,17 +11,26 @@ const colorMap = {
   "Not Connected": "red",
 };
 
+export const DebugPrinter = () => {
+  const controls = useControls({
+    position: { value: [0, 0, 0], step: 0.1 },
+    scale: { value: [1, 1, 1], step: 0.05 },
+    rotation: { value: [0, 0, 0], step: Math.PI / 180, min: 0, max: Math.PI * 2 },
+  });
+
+  return <Printer {...controls} />
+}
+
 // this will load a OBJLoader file, we can also load other file types
 const Printer = ({
-  file,
+  file = "/mk4.obj",
   position = [0, 0, 0],
   rotation = [0, 0, 0],
   scale = [1, 1, 1],
-  link,
-  apiKey,
-  setActive,
-  name,
-  cameraRef,
+  link = "",
+  apiKey = "",
+  name = "",
+  cameraRef = null,
 }) => {
   const printer = useLoader(OBJLoader, file);
   const clone = useMemo(() => printer.clone(), [printer]);
@@ -92,7 +102,6 @@ const Printer = ({
       <primitive
         castshadow
         onClick={(e) => {
-          setActive(true);
           setPrinter({name: name, link: link, key: apiKey});
           cameraRef.current.setPosition(0, 25, -80, true)
         }}

@@ -1,12 +1,7 @@
-import { extend, useLoader, useThree } from "@react-three/fiber";
+import { useLoader} from "@react-three/fiber";
 import { useControls } from "leva";
-import { useEffect, useMemo, useState, useRef } from "react";
-import { BoxHelper, MeshStandardMaterial } from "three";
-import {
-  DRACOLoader,
-  GLTFLoader,
-  OBJLoader,
-} from "three/examples/jsm/Addons.js";
+import { useMemo } from "react";
+import { GLTFLoader} from "three/examples/jsm/Addons.js";
 
 const Item = ({
   file,
