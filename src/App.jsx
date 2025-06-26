@@ -2,11 +2,12 @@ import { useState, useRef } from "react";
 import { Canvas } from "@react-three/fiber";
 import { CameraControls, OrbitControls } from "@react-three/drei";
 import printers from "./assets/printers.json";
+import desks from "./assets/desks.json";
 import Printer, { DebugPrinter } from "./Components/Printer";
 import Background from "./Components/Background";
-import { DebugDesk, Desk } from "./Components/Desk";
 import { useControls } from "leva";
 import { create } from "zustand";
+import { Desk, DebugDesk } from "./Components/Desk";
 
 /* This is a helper function for lights */
 export const Light = ({ target }) => {
@@ -47,11 +48,12 @@ export const Light = ({ target }) => {
 
 // This is the storage for which printer is being shown on the Wall
 export const usePrinterStore = create((set) => ({
-  printer: {name: "", link: "", key: ""},
-  setPrinter: (newState) => set((state) => {
-    return {printer: newState}
-  }),
-}))
+  printer: { name: "", link: "", key: "" },
+  setPrinter: (newState) =>
+    set((state) => {
+      return { printer: newState };
+    }),
+}));
 
 // Main entry point, each time we add a new printer we add another useState(False)
 function App() {
@@ -70,19 +72,27 @@ function App() {
         }}
       >
         <color attach="background" args={["#f7f3e6"]} />
-        
+
         <CameraControls ref={cameraRef} />
         <ambientLight intensity={2} color="#e9e5dc" />
-        <Desk position={[-16, 4.5, 8.5]} />
-        <Desk position={[-8, 4.5, -8.5]} rotation={[0, Math.PI / 2, 0]} />
+        {desks.map((desk, index) =>
+          "debug" in desk ? (
+            <DebugDesk key={index} />
+          ) : (
+            <Desk key={index} {...desk} />
+          )
+        )}
+        {/* <Desk position={[-16, 4.5, 8.5]} />
+        <Desk position={[-8, 4.5, -8.5]} rotation={[0, Math.PI / 2, 0]} /> */}
+
         <Background />
-        {printers.map((printer, index) => "debug" in printer ? <DebugPrinter key={index}/> : (
-          <Printer
-            key={printer.apiKey}
-            cameraRef={cameraRef}
-            {...printer}
-          />
-        ))}
+        {printers.map((printer, index) =>
+          "debug" in printer ? (
+            <DebugPrinter key={index} />
+          ) : (
+            <Printer key={printer.apiKey} cameraRef={cameraRef} {...printer} />
+          )
+        )}
         <OrbitControls
           zoomToCursor={true}
           enablePan={true}
