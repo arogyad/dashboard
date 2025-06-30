@@ -10,12 +10,14 @@ To add a new printer to the dashboard view, you need to add the following inform
   "position": [-2, 12, 1.3],
   "rotation": [-1.57, 0, 3.14],
   "scale": [0.03, 0.03, 0.03],
-  "link": "http://<ip>/<instancename>",
+  "link": "http://localhost/instanceName",
   "apiKey": <apikey>,
-  "name": <instancename>,
+  "name": <instanceName>,
   "debug": true
 }
 ```
+
+> Above instanceName refers to `{{instanceName}}`
 
 This will place a MK4 printer in at position specified and enable debugging. Having `"debug": true` allows us to change the position, rotation, and scale of the model. After specifying the proper configuration, copy the values to the respective fields and place it in `printers.json` file without the `debug` field.
 
@@ -29,9 +31,9 @@ This will place a MK4 printer in at position specified and enable debugging. Hav
 | position | the position of the 3D model                                  | The property to change when `debug` flag is `true`                                                                                 |
 | rotation | the rotation of the 3D model                                  | I would suggest rotation to be a multiple of &pi;                                                                                  |
 | scale    | the scale of the model                                        | `0.03` and `0.06` seem like good values for MK4 and XL respectively                                                                |
-| link     | the octopi printer link                                       | always in the form `http://<ip>/<instancename>`                                                                                    |
+| link     | the octopi printer link                                       | always in the form `http://localhost/{{instanceName}}`                                                                             |
 | apiKey   | API key for interacting with server                           | **Step 2** in [Printer Customization](/?id=printer-customization)                                                                  |
-| name     | name of the instance                                          | same as ` <instancename>`                                                                                                          |
+| name     | name of the instance                                          | ` {{instanceName}}`                                                                                                                |
 | debug    | debug flag                                                    | I would use this when first time adding a new printer to find its properties (position, rotation, scale), otherwise just ignore it |
 
 ## Adding more desks

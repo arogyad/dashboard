@@ -13,19 +13,29 @@
   <script>
     window.$docsify = {
       name: 'dashboard',
-      // themeColor: '#003668',
+      themeColor: '#003668',
       repo: 'https://github.com/arogyad/dashboard',
       loadSidebar: true,
       subMaxLevel: 3,
+      coverpage: true,
       search: {
         placeholder: 'Search',
         noData: 'No results found',
         hideOtherSidebarContent: true,
-      }
+      },
+      vueGlobalOptions: {
+        data() {
+          return {
+            instanceName: "hydrogen",
+          };
+        },
+      },
     }
   </script>
   <script src="//cdn.jsdelivr.net/npm/docsify@4"></script>
+  <script src="//unpkg.com/docsify/lib/plugins/vue.min.js"></script>
   <script src="//cdn.jsdelivr.net/npm/docsify/lib/plugins/search.min.js"></script>
   <script src="//cdn.jsdelivr.net/npm/prismjs@1.22/components/prism-json.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/vue@3/dist/vue.global.prod.js"></script>
 </body>
 </html>
